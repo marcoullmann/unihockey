@@ -1,0 +1,164 @@
+:root {
+  --bg: #0f1419;
+  --panel: #1a212b;
+  --panel-2: #212b38;
+  --border: #2c3744;
+  --text: #e6edf3;
+  --muted: #8b97a7;
+  --accent: #4cc38a;
+  --accent-2: #2f81f7;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hero {
+  text-align: center;
+  padding: 56px 20px 28px;
+  background: radial-gradient(120% 100% at 50% 0%, #16202c 0%, var(--bg) 70%);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.toolbar input {
+  flex: 1;
+  padding: 11px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.toolbar input:focus {
+  border-color: var(--accent-2);
+}
+
+.toolbar button {
+  padding: 11px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toolbar button:hover { border-color: var(--accent); }
+.toolbar button:active { transform: translateY(1px); }
+
+.status {
+  color: var(--muted);
+  padding: 14px 4px;
+  font-size: 0.95rem;
+}
+
+.status.error {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  border-radius: 10px;
+  padding: 16px;
+  line-height: 1.5;
+}
+
+.status.error code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.94rem;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: 13px 16px;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+thead th:hover { color: var(--accent); }
+
+thead th .arrow {
+  color: var(--muted);
+  font-size: 0.75em;
+  margin-left: 6px;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.015); }
+tbody tr:hover { background: rgba(47, 129, 247, 0.08); }
+
+footer {
+  text-align: center;
+  padding: 22px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+footer a { color: var(--muted); }
+footer a:hover { color: var(--accent); }
+.dot { margin: 0 8px; opacity: 0.5; }

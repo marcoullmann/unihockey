@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unihockey</title>
+  <meta name="description" content="One-page site showing data from a Google Sheet." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏑</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <h1 id="title">Unihockey</h1>
+    <p id="subtitle">Live data from Google Sheets</p>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Filter rows…" autocomplete="off" />
+      <button id="refresh" type="button" title="Reload data">↻ Refresh</button>
+    </div>
+
+    <div id="status" class="status" role="status"></div>
+
+    <div class="table-wrap">
+      <table id="table" hidden>
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <span id="meta"></span>
+    <span class="dot">•</span>
+    <a href="https://github.com/marcoullmann/unihockey" target="_blank" rel="noopener">source</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
