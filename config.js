@@ -10,14 +10,20 @@ window.APP_CONFIG = {
   // Anmelde-Formular (der grosse "Team anmelden"-Button).
   FORM_URL: "https://forms.gle/yTx61tECJizBjyPT7",
 
-  // Optionales Hero-Hintergrundbild. Lege eine Datei unter images/ ab und trage
-  // den Pfad hier ein, z.B. "images/feld.jpg". Leer lassen = nur Farbverlauf.
-  HERO_IMAGE: "",
+  // Hero-Hintergrund: optionales Video (stummer Loop) mit Bild als Fallback/Poster.
+  // Leer lassen = nur Farbverlauf.
+  HERO_IMAGE: "images/hero.jpg",
+  HERO_VIDEO: "", // wird nach dem Schneiden gesetzt, z.B. "images/hero-loop.mp4"
 
-  // Optionale Foto-Galerie. Dateien in images/ ablegen und Pfade eintragen.
-  // Leer lassen = Galerie-Abschnitt wird ausgeblendet.
-  // Beispiel: ["images/feld-1.jpg", "images/feld-2.jpg"]
-  GALLERY: [],
+  // Foto-Galerie unten auf der Seite.
+  GALLERY: [
+    "images/g1.jpg",
+    "images/g2.jpg",
+    "images/g3.jpg",
+    "images/g4.jpg",
+    "images/g5.jpg",
+    "images/g6.jpg",
+  ],
 
   // ── Datentabellen aus dem Google-Sheet ──────────────────────────────────────
   // Jede Sektion zeigt ein Tabellenblatt (Tab) des Sheets an.

@@ -3,11 +3,19 @@
 const cfg = window.APP_CONFIG || {};
 const $ = (s, r = document) => r.querySelector(s);
 
-// ── Hero-Bild ────────────────────────────────────────────────
+// ── Hero-Bild / -Video ───────────────────────────────────────
 if (cfg.HERO_IMAGE) {
-  const hero = $(".hero");
   $("#hero-bg").style.backgroundImage = `url("${cfg.HERO_IMAGE}")`;
-  hero.classList.add("has-photo");
+  $(".hero").classList.add("has-photo");
+}
+if (cfg.HERO_VIDEO) {
+  const v = $("#hero-video");
+  v.src = cfg.HERO_VIDEO;
+  if (cfg.HERO_IMAGE) v.poster = cfg.HERO_IMAGE;
+  v.hidden = false;
+  $("#hero-scrim").hidden = false;
+  const p = v.play();
+  if (p && p.catch) p.catch(() => {}); // Autoplay-Block ignorieren, Bild bleibt sichtbar
 }
 
 // ── Anmelde-Buttons mit dem Formular verbinden ───────────────
@@ -16,14 +24,24 @@ if (cfg.FORM_URL) {
   if (formBtn) { formBtn.href = cfg.FORM_URL; formBtn.target = "_blank"; formBtn.rel = "noopener"; }
 }
 
-// ── Galerie (optional) ───────────────────────────────────────
+// ── Galerie (optional) mit Lightbox ──────────────────────────
 if (Array.isArray(cfg.GALLERY) && cfg.GALLERY.length) {
   const wrap = $("#gallery");
+  const box = document.createElement("div");
+  box.className = "lightbox";
+  box.hidden = true;
+  box.innerHTML = '<img alt="Foto vom Unihockey-Turnier">';
+  document.body.appendChild(box);
+  const close = () => { box.hidden = true; };
+  box.addEventListener("click", close);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+
   cfg.GALLERY.forEach((src) => {
     const img = document.createElement("img");
     img.src = src;
     img.alt = "Impression vom Unihockey-Turnier";
     img.loading = "lazy";
+    img.addEventListener("click", () => { box.firstElementChild.src = src; box.hidden = false; });
     wrap.appendChild(img);
   });
   $("#galerie-sec").hidden = false;
