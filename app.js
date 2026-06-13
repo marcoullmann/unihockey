@@ -91,23 +91,18 @@ function SheetSection(opts) {
   let columns = [], rows = [], sortCol = -1, sortDir = 1;
 
   // Markup aufbauen
-  const bar = document.createElement("div");
-  bar.className = "sheet-bar";
   let searchEl = null;
+  let bar = null;
   if (opts.filter) {
+    bar = document.createElement("div");
+    bar.className = "sheet-bar";
     searchEl = document.createElement("input");
     searchEl.type = "search";
     searchEl.className = "sheet-search";
-    searchEl.placeholder = "Team filtern…";
+    searchEl.placeholder = "filtern…";
     searchEl.autocomplete = "off";
     bar.appendChild(searchEl);
   }
-  const refresh = document.createElement("button");
-  refresh.type = "button";
-  refresh.className = "sheet-refresh";
-  refresh.title = "Neu laden";
-  refresh.textContent = "↻";
-  bar.appendChild(refresh);
 
   const status = document.createElement("div");
   status.className = "sheet-status";
@@ -124,7 +119,8 @@ function SheetSection(opts) {
   const meta = document.createElement("div");
   meta.className = "sheet-meta";
 
-  root.append(bar, status, tableWrap, meta);
+  if (bar) root.append(bar);
+  root.append(status, tableWrap, meta);
 
   const wrapSection = root.closest("section");
   const showSection = (v) => { if (wrapSection) wrapSection.style.display = v ? "" : "none"; };
@@ -189,7 +185,7 @@ function SheetSection(opts) {
 
     const hasData = columns.length > 0 && view.length > 0;
     tableWrap.hidden = !hasData;
-    bar.style.display = hasData || (searchEl && filter) ? "flex" : "none";
+    if (bar) bar.style.display = hasData || filter ? "flex" : "none";
 
     if (columns.length === 0 || rows.length === 0) {
       setStatus(opts.empty || "Noch keine Daten.", "soft");
@@ -204,7 +200,7 @@ function SheetSection(opts) {
     const url = buildUrl(opts.sheetName, opts.headerRows);
     if (!url) { setStatus("Keine Datenquelle konfiguriert.", "error"); return 0; }
 
-    bar.style.display = "flex";
+    if (bar) bar.style.display = "flex";
     setStatus("Lädt…", "");
     tableWrap.hidden = true;
     meta.textContent = "";
@@ -263,7 +259,6 @@ function SheetSection(opts) {
     }
   }
 
-  refresh.addEventListener("click", load);
   if (searchEl) searchEl.addEventListener("input", render);
   return { load, opts };
 }
