@@ -27,11 +27,10 @@ if (cfg.FORM_URL) {
 if (Array.isArray(cfg.GALLERY) && cfg.GALLERY.length) {
   const wrap = $("#gallery");
   const box = document.createElement("div");
-  box.className = "lightbox";
-  box.hidden = true;
+  box.className = "lightbox"; // versteckt per CSS (display:none), bis .open gesetzt wird
   box.innerHTML = '<img alt="Foto vom Unihockey-Turnier">';
   document.body.appendChild(box);
-  const close = () => { box.hidden = true; };
+  const close = () => box.classList.remove("open");
   box.addEventListener("click", close);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
 
@@ -40,7 +39,7 @@ if (Array.isArray(cfg.GALLERY) && cfg.GALLERY.length) {
     img.src = src;
     img.alt = "Impression vom Unihockey-Turnier";
     img.loading = "lazy";
-    img.addEventListener("click", () => { box.firstElementChild.src = src; box.hidden = false; });
+    img.addEventListener("click", () => { box.firstElementChild.src = src; box.classList.add("open"); });
     wrap.appendChild(img);
   });
   $("#galerie-sec").hidden = false;
