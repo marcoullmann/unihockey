@@ -13,7 +13,7 @@ window.APP_CONFIG = {
   // Hero-Hintergrund: optionales Video (stummer Loop) mit Bild als Fallback/Poster.
   // Leer lassen = nur Farbverlauf.
   HERO_IMAGE: "images/hero.jpg",
-  HERO_VIDEO: "", // wird nach dem Schneiden gesetzt, z.B. "images/hero-loop.mp4"
+  HERO_VIDEO: "images/hero-loop.mp4", // stummer 720p-Loop, Bild dient als Poster/Fallback
 
   // Foto-Galerie unten auf der Seite.
   GALLERY: [
