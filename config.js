@@ -1,33 +1,58 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// EDIT THIS FILE to control what the page shows.
-//
-// SHEET_ID    – the long id from your sheet URL (between /d/ and /edit).
-// SHEET_NAME  – tab name, or "" for the first tab.
-// HEADER_ROWS – number of header rows in the sheet (1 for a normal sheet).
-// COLUMNS     – allowlist of column headers to display, in this order.
-//               Leave [] to show ALL columns.
-//
-//   ⚠ PRIVACY: this site is PUBLIC and gets indexed by search engines.
-//   This sheet is a form-response sheet that collects personal data
-//   (names, WhatsApp numbers, e-mail addresses). COLUMNS is therefore
-//   restricted to the non-sensitive fields. Do NOT add "Name",
-//   "WhatsApp Telefonnummer" or "E-Mail-Adresse" unless you truly intend
-//   to publish those people's contact details to the open internet.
+//  KONFIGURATION  –  hier stellst du die dynamischen Teile der Seite ein.
+//  Der feste Text (Regeln, Infos …) steht direkt in index.html.
 // ─────────────────────────────────────────────────────────────────────────────
 
 window.APP_CONFIG = {
+  // Google-Sheet, das als Datenquelle dient (muss "Jeder mit Link → Betrachter" sein).
   SHEET_ID: "1WNip6EDSLhSV8UFcmnRud8p09_0BOfIip5z6IeTSzT8",
-  SHEET_NAME: "",
-  HEADER_ROWS: 1,
 
-  // Public, non-sensitive columns only. Add more headers here to show them.
-  COLUMNS: ["Teamname", "Ort"],
-
-  // The Google Form people register through (the "Register" button).
+  // Anmelde-Formular (der grosse "Team anmelden"-Button).
   FORM_URL: "https://forms.gle/yTx61tECJizBjyPT7",
-  CTA_LABEL: "Team anmelden",
 
-  TITLE: "Unihockey-Turnier",
-  SUBTITLE: "Melde dein Team für das Turnier an – und sieh, wer schon dabei ist.",
-  TABLE_TITLE: "Angemeldete Teams",
+  // Optionales Hero-Hintergrundbild. Lege eine Datei unter images/ ab und trage
+  // den Pfad hier ein, z.B. "images/feld.jpg". Leer lassen = nur Farbverlauf.
+  HERO_IMAGE: "",
+
+  // Optionale Foto-Galerie. Dateien in images/ ablegen und Pfade eintragen.
+  // Leer lassen = Galerie-Abschnitt wird ausgeblendet.
+  // Beispiel: ["images/feld-1.jpg", "images/feld-2.jpg"]
+  GALLERY: [],
+
+  // ── Datentabellen aus dem Google-Sheet ──────────────────────────────────────
+  // Jede Sektion zeigt ein Tabellenblatt (Tab) des Sheets an.
+  // mount      = id des Containers in index.html
+  // sheetName  = Name des Tabs ("" = erstes Tab)
+  // columns    = nur diese Spalten anzeigen ([] = alle). PII-Schutz!
+  // filter     = Suchfeld anzeigen
+  // soft       = wenn das Tab (noch) nicht existiert, freundliche Meldung statt Fehler
+  SECTIONS: [
+    {
+      mount: "spielplan",
+      sheetName: "Spielplan",
+      headerRows: 1,
+      columns: [],
+      filter: false,
+      soft: true,
+      empty: "Der Spielplan wird kurz vor dem Turnier hier aufgeschaltet – sobald alle Anmeldungen da sind und die Gruppen feststehen.",
+    },
+    {
+      mount: "teams",
+      sheetName: "", // Tab mit den Formular-Antworten
+      headerRows: 1,
+      columns: ["Teamname", "Ort"], // ⚠ keine Namen/Tel./E-Mail öffentlich zeigen
+      filter: true,
+      soft: true,
+      empty: "Noch keine Anmeldungen – sei das erste Team! 🏑",
+    },
+    {
+      mount: "resultate",
+      sheetName: "Resultate",
+      headerRows: 1,
+      columns: [],
+      filter: false,
+      soft: true,
+      empty: "Sobald gespielt wird, erscheinen hier die Resultate und die Rangliste – live.",
+    },
+  ],
 };

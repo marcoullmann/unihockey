@@ -1,39 +1,42 @@
-# Unihockey
+# Familien-Unihockey-Turnier · St. Margarethen TG
 
-A free, one-page website that displays data from a **public Google Sheet** — no backend,
-no API key, no build step. Pure static HTML/CSS/JS, hosted on Vercel.
+One-Pager für ein Plausch-Unihockey-Turnier auf dem Outdoor-Spielfeld beim Schulhaus
+Kastanienhof in St. Margarethen TG. Statisch (HTML/CSS/JS), kostenlos auf Vercel
+gehostet, Daten live aus einem **öffentlichen Google-Sheet** – ohne Backend, ohne API-Key.
 
-## How it works
+**Live:** https://popup-unihockey.vercel.app
 
-The page reads your sheet through Google's public `gviz` JSON endpoint. As long as the
-sheet is shared as *"Anyone with the link → Viewer"*, the browser can fetch it directly.
-Features: live filter, click-to-sort columns, refresh button, responsive layout.
+## Wie die Daten reinkommen
 
-## Point it at your sheet
+Die Seite liest das Google-Sheet über den öffentlichen `gviz`-Endpoint. Drei Tabellen
+werden angezeigt (siehe `SECTIONS` in [`config.js`](./config.js)):
 
-1. Open your Google Sheet → **Share** → **General access: Anyone with the link → Viewer**.
-2. Copy the id from the URL:
-   `https://docs.google.com/spreadsheets/d/`**`<SHEET_ID>`**`/edit#gid=0`
-3. Edit [`config.js`](./config.js):
-   ```js
-   window.APP_CONFIG = {
-     SHEET_ID: "your-sheet-id-here",
-     SHEET_NAME: "",          // tab name, or "" for the first tab
-     TITLE: "Unihockey",
-     SUBTITLE: "Live data from Google Sheets",
-   };
-   ```
-4. Commit & push — Vercel redeploys automatically.
+| Sektion          | Tab im Sheet | Anzeige |
+|------------------|--------------|---------|
+| **Spielplan**    | `Spielplan`  | alle Spalten |
+| **Angemeldete Teams** | erstes Tab (Formular-Antworten) | nur `Teamname`, `Ort` |
+| **Resultate & Rangliste** | `Resultate` | alle Spalten |
 
-## Run locally
+Die Logik (Spielplan berechnen, Rangliste etc.) machst du **im Google-Sheet**; die
+Website zeigt die Tabs nur an. Tabs, die noch nicht existieren, zeigen eine freundliche
+„kommt noch"-Meldung statt eines Fehlers.
 
-It's static, so any static server works:
+> ⚠️ **Datenschutz:** Die Seite ist öffentlich. Bei den Teams werden bewusst nur
+> `Teamname` und `Ort` gezeigt – **keine** Namen, Telefonnummern oder E-Mails.
+> Ändere die `columns`-Liste nur, wenn du das wirklich öffentlich machen willst.
+
+## Anpassen
+
+- **Texte/Regeln/Infos:** direkt in [`index.html`](./index.html).
+- **Sheet, Formular, Tabellen, Bilder:** in [`config.js`](./config.js).
+- **Fotos:** in [`images/`](./images) ablegen und in `config.js` verlinken.
+
+## Lokal testen
 
 ```bash
 npx serve .
-# then open the printed http://localhost:... URL
 ```
 
-## Deploy
+## Deployen
 
-Connected to Vercel — every push to `main` triggers a production deploy.
+Mit Vercel + GitHub verbunden: jeder `git push` auf `main` deployt automatisch.

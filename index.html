@@ -3,41 +3,231 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unihockey – Anmeldung</title>
-  <meta name="description" content="Melde dein Unihockey-Team an und sieh, welche Teams schon dabei sind." />
+  <title>Familien-Unihockey-Turnier · St. Margarethen TG</title>
+  <meta name="description" content="Plausch-Unihockey für die ganze Familie auf dem Outdoor-Spielfeld beim Schulhaus Kastanienhof in St. Margarethen TG. Samstag, 20. Juli 2026. Gemischte Teams, Grill, gute Stimmung – jetzt anmelden!" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏑</text></svg>" />
+
+  <!-- Link-Vorschau (WhatsApp, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Familien-Unihockey-Turnier · St. Margarethen TG" />
+  <meta property="og:description" content="Plausch-Unihockey für die ganze Familie · Sa, 20. Juli 2026 · Schulhaus Kastanienhof · jetzt Team anmelden!" />
+  <meta name="theme-color" content="#1f9e4a" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="config.js"></script>
 </head>
 <body>
-  <header class="hero">
-    <h1 id="title">Unihockey</h1>
-    <p id="subtitle">Melde dein Team an – und sieh, wer schon dabei ist.</p>
-    <a id="cta" class="cta" href="#" target="_blank" rel="noopener" hidden>Team anmelden</a>
+
+  <!-- ── Navigation ───────────────────────────────────────────── -->
+  <nav class="topnav" id="topnav">
+    <a class="brand" href="#top">🏑 St. Margarethen</a>
+    <div class="links">
+      <a href="#infos">Infos</a>
+      <a href="#regeln">Regeln</a>
+      <a href="#spielplan-sec">Spielplan</a>
+      <a href="#resultate-sec">Resultate</a>
+      <a href="#anfahrt">Anfahrt</a>
+    </div>
+    <a class="nav-cta" id="nav-cta" href="#anmelden">Anmelden</a>
+  </nav>
+
+  <!-- ── Hero ─────────────────────────────────────────────────── -->
+  <header class="hero" id="top">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-inner">
+      <span class="kicker">Plausch-Unihockey für alle · St. Margarethen TG</span>
+      <h1>Familien-Unihockey<br><span class="accent">Turnier</span></h1>
+      <p class="lead">Drei gegen drei, gemischte Teams, gute Laune – Frauen, Männer, Kinder
+        und Erwachsene auf dem Outdoor-Spielfeld beim Schulhaus&nbsp;Kastanienhof.</p>
+
+      <div class="hero-facts">
+        <div class="fact"><span class="fact-ico">📅</span><strong>Sa, 20. Juli 2026</strong><small>Start nach Spielplan · Ende ca. 11:30 Uhr</small></div>
+        <div class="fact"><span class="fact-ico">📍</span><strong>Schulhaus Kastanienhof</strong><small>Weinfelderstrasse 90, 9543 St.&nbsp;Margarethen</small></div>
+        <div class="fact"><span class="fact-ico">👨‍👩‍👧‍👦</span><strong>Für die ganze Familie</strong><small>Mitmachen dürfen alle – kein Vorwissen nötig</small></div>
+      </div>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" id="hero-cta" href="#anmelden">Jetzt Team anmelden →</a>
+        <a class="btn btn-ghost" href="#infos">Was dich erwartet</a>
+      </div>
+    </div>
+    <div class="hero-stick" aria-hidden="true">
+      <!-- Unihockeystock + Ball -->
+      <svg viewBox="0 0 240 240" width="100%" height="100%">
+        <g transform="rotate(28 120 120)">
+          <rect x="112" y="10" width="14" height="150" rx="7" fill="#ffffff" opacity="0.95"/>
+          <path d="M92 150 q-26 6 -30 40 q-2 26 34 30 l40 0 q14 -2 14 -16 q0 -12 -14 -14 l-30 0 q-8 -1 -8 -10 q0 -8 8 -10 z" fill="#ffd23f"/>
+        </g>
+        <circle cx="74" cy="196" r="20" fill="#ffffff"/>
+        <circle cx="68" cy="190" r="3.2" fill="#1f9e4a"/>
+        <circle cx="80" cy="190" r="3.2" fill="#1f9e4a"/>
+        <circle cx="74" cy="202" r="3.2" fill="#1f9e4a"/>
+        <circle cx="63" cy="199" r="3.2" fill="#1f9e4a"/>
+        <circle cx="85" cy="199" r="3.2" fill="#1f9e4a"/>
+      </svg>
+    </div>
   </header>
 
   <main>
-    <div class="section-head">
-      <h2 id="table-title">Angemeldete Teams</h2>
-      <button id="refresh" type="button" title="Neu laden">↻</button>
-    </div>
 
-    <input id="search" type="search" placeholder="Team filtern…" autocomplete="off" />
+    <!-- ── Eckdaten / Über ─────────────────────────────────────── -->
+    <section id="infos" class="section">
+      <div class="section-head">
+        <span class="eyebrow">Worum es geht</span>
+        <h2>Ein Turnier für Gross und Klein</h2>
+      </div>
+      <p class="intro">
+        Bei uns zählt der Plausch, nicht der Pokal. Die Teams sind bunt gemischt – Kinder spielen
+        neben Erwachsenen, Anfängerinnen neben alten Hasen. Es geht um Bewegung, Lachen und einen
+        schönen Sommertag in der Gemeinschaft. Übertriebener Ehrgeiz bleibt zu Hause, damit auch
+        die Kleinsten Freude am Mitmachen haben.
+      </p>
 
-    <div id="status" class="status" role="status"></div>
+      <div class="cards">
+        <div class="card"><span class="card-ico">🥅</span><h3>3 gegen 3</h3><p>Pro Team stehen drei Feldspieler auf dem Platz. Keine Goalies, keine Schiedsrichter – gespielt wird fair und selbstständig.</p></div>
+        <div class="card"><span class="card-ico">⏱️</span><h3>8 + 2 Minuten</h3><p>Jedes Spiel dauert 8 Minuten, danach 2 Minuten Pause bis zum nächsten Match.</p></div>
+        <div class="card"><span class="card-ico">🔀</span><h3>Gemischte Teams</h3><p>Frauen, Männer, Kinder und Erwachsene zusammen in einem Team. Genau das macht den Reiz aus.</p></div>
+        <div class="card"><span class="card-ico">📊</span><h3>Dynamischer Spielplan</h3><p>Der Spielplan wird je nach Anzahl angemeldeter Mannschaften berechnet und hier angezeigt.</p></div>
+      </div>
+    </section>
 
-    <div class="table-wrap">
-      <table id="table" hidden>
-        <thead id="thead"></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
+    <!-- ── Regeln ──────────────────────────────────────────────── -->
+    <section id="regeln" class="section section-tint">
+      <div class="section-head">
+        <span class="eyebrow">So wird gespielt</span>
+        <h2>Die wichtigsten Regeln</h2>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="rule-no">1</span><div><h4>Drei Feldspieler pro Team</h4><p>Immer drei pro Mannschaft auf dem Feld. Wechseln dürft ihr beliebig.</p></div></div>
+        <div class="rule"><span class="rule-no">2</span><div><h4>Bully beim Anspiel</h4><p>Jedes Spiel startet mit einem Bully. Danach wird durchgespielt – auch nach einem Tor läuft das Spiel einfach weiter.</p></div></div>
+        <div class="rule"><span class="rule-no">3</span><div><h4>Keine Goalies, keine Schiris</h4><p>Es gibt kein Torhüter-Privileg und keine Schiedsrichter. Vor Ort sind genug Leute, die die Regeln kennen und helfen.</p></div></div>
+        <div class="rule"><span class="rule-no">4</span><div><h4>Plausch vor Ehrgeiz</h4><p>Fairplay und Rücksicht – besonders gegenüber den Kindern. Wir spielen miteinander, nicht gegeneinander.</p></div></div>
+        <div class="rule"><span class="rule-no">5</span><div><h4>Resultate melden</h4><p>Das Ergebnis bitte nach jedem Spiel <strong>Marco Ullmann</strong> melden. Es erscheint dann automatisch hier auf der Website.</p></div></div>
+      </div>
+    </section>
+
+    <!-- ── Mitnehmen ───────────────────────────────────────────── -->
+    <section id="mitnehmen" class="section">
+      <div class="section-head">
+        <span class="eyebrow">Packliste</span>
+        <h2>Was du mitbringen solltest</h2>
+      </div>
+      <div class="checklist">
+        <div class="check"><span>👟</span><div><strong>Gute Turnschuhe</strong><p>Mit Profil für den Outdoor-Belag.</p></div></div>
+        <div class="check"><span>👕</span><div><strong>Sportbekleidung</strong><p>Bequem und dem Wetter angepasst.</p></div></div>
+        <div class="check"><span>🏑</span><div><strong>Unihockey-Ausrüstung</strong><p>Falls vorhanden. Vor Ort gibt es genug Stöcke zum Ausleihen.</p></div></div>
+        <div class="check"><span>💧</span><div><strong>Trinkflasche</strong><p>Es wird warm – genug trinken!</p></div></div>
+        <div class="check"><span>🧴</span><div><strong>Sonnenschutz &amp; Kappe</strong><p>Sonnencreme nicht vergessen, der Platz liegt an der Sonne.</p></div></div>
+        <div class="check"><span>🍖</span><div><strong>Grillgut</strong><p>Was du nach dem Turnier grillieren möchtest, bringst du selber mit.</p></div></div>
+      </div>
+    </section>
+
+    <!-- ── Drumherum ───────────────────────────────────────────── -->
+    <section id="drumherum" class="section section-tint">
+      <div class="section-head">
+        <span class="eyebrow">Festwirtschaft &amp; Geselligkeit</span>
+        <h2>Rund ums Turnier</h2>
+      </div>
+      <div class="cards">
+        <div class="card"><span class="card-ico">🔥</span><h3>Grillstelle</h3><p>Nach dem Turnier könnt ihr eure mitgebrachten Sachen über dem Grill brutzeln.</p></div>
+        <div class="card"><span class="card-ico">🪑</span><h3>Festbänke</h3><p>Zwei Festbank-Garnituren laden zum gemütlichen Sitzen und Verweilen ein.</p></div>
+        <div class="card"><span class="card-ico">🥤</span><h3>Snacks &amp; Kühles</h3><p>Chips &amp; Co. sind da. Wir versuchen, eine Kühlbox mit Strom für kühle Getränke zu organisieren.</p></div>
+        <div class="card"><span class="card-ico">⚽</span><h3>Fussball für Kinder</h3><p>Auf dem Fussballfeld nebenan liegt ein Ball bereit – gegen Langeweile in den Spielpausen.</p></div>
+      </div>
+    </section>
+
+    <!-- ── Spielplan (dynamisch) ───────────────────────────────── -->
+    <section id="spielplan-sec" class="section">
+      <div class="section-head">
+        <span class="eyebrow">Live aus dem Sheet</span>
+        <h2>Spielplan</h2>
+      </div>
+      <div id="spielplan" class="sheet-section"></div>
+    </section>
+
+    <!-- ── Angemeldete Teams (dynamisch) ───────────────────────── -->
+    <section id="teams-sec" class="section section-tint">
+      <div class="section-head">
+        <span class="eyebrow">Wer schon dabei ist</span>
+        <h2>Angemeldete Teams</h2>
+      </div>
+      <div id="teams" class="sheet-section"></div>
+    </section>
+
+    <!-- ── Resultate (dynamisch) ───────────────────────────────── -->
+    <section id="resultate-sec" class="section">
+      <div class="section-head">
+        <span class="eyebrow">Live während des Turniers</span>
+        <h2>Resultate &amp; Rangliste</h2>
+      </div>
+      <div id="resultate" class="sheet-section"></div>
+    </section>
+
+    <!-- ── Galerie (optional) ──────────────────────────────────── -->
+    <section id="galerie-sec" class="section section-tint" hidden>
+      <div class="section-head">
+        <span class="eyebrow">Impressionen</span>
+        <h2>Vom Platz</h2>
+      </div>
+      <div id="gallery" class="gallery"></div>
+    </section>
+
+    <!-- ── Anmeldung CTA ───────────────────────────────────────── -->
+    <section id="anmelden" class="cta-band">
+      <h2>Bereit? Dann meldet euer Team an!</h2>
+      <p>Sucht euch einen kreativen Teamnamen aus und tragt euch ein. Wir freuen uns auf euch.</p>
+      <a class="btn btn-primary btn-lg" id="cta-band-btn" href="#">Team anmelden →</a>
+    </section>
+
+    <!-- ── Anfahrt ─────────────────────────────────────────────── -->
+    <section id="anfahrt" class="section">
+      <div class="section-head">
+        <span class="eyebrow">So findet ihr uns</span>
+        <h2>Ort &amp; Anfahrt</h2>
+      </div>
+      <div class="location">
+        <div class="loc-info">
+          <p class="loc-addr"><strong>Outdoor-Unihockeyfeld</strong><br>beim Schulhaus Kastanienhof<br>Weinfelderstrasse 90<br>9543 St.&nbsp;Margarethen TG</p>
+          <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=Schulhaus+Kastanienhof+Weinfelderstrasse+90+9543+St.+Margarethen" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>
+        </div>
+        <div class="loc-map">
+          <iframe
+            title="Karte Schulhaus Kastanienhof St. Margarethen"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Schulhaus%20Kastanienhof%20Weinfelderstrasse%2090%209543%20St.%20Margarethen%20TG&output=embed"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Haftung ─────────────────────────────────────────────── -->
+    <section id="haftung" class="section section-tint">
+      <div class="notice">
+        <h3>⚠️ Wichtig zur Teilnahme</h3>
+        <p>Die Teilnahme erfolgt auf eigene Verantwortung. Jegliche Haftung wird abgelehnt;
+          für eine ausreichende Versicherung (Unfall etc.) ist jede Teilnehmerin und jeder
+          Teilnehmer selbst verantwortlich. Mit der Anmeldung erklärt ihr euch damit einverstanden.</p>
+      </div>
+    </section>
+
   </main>
 
-  <footer>
-    <span id="meta"></span>
-    <span class="dot">•</span>
-    <a href="https://github.com/marcoullmann/unihockey" target="_blank" rel="noopener">source</a>
+  <!-- ── Footer ──────────────────────────────────────────────── -->
+  <footer class="footer">
+    <img class="wappen" src="wappen-muenchwilen.svg" alt="Wappen der Gemeinde Münchwilen TG" width="60" height="72" />
+    <p class="footer-lead">Familien-Unihockey-Turnier · St. Margarethen TG</p>
+    <p class="footer-note">
+      St. Margarethen gehört zur Gemeinde Münchwilen TG – einer der drei Sterne im Gemeindewappen
+      steht für unser Dorf. Organisation &amp; Resultate: <strong>Marco Ullmann</strong>.
+    </p>
+    <p class="footer-meta">
+      <a href="https://github.com/marcoullmann/unihockey" target="_blank" rel="noopener">Quellcode</a>
+      <span class="dot">·</span>
+      Wappen © Gemeinde Münchwilen / Wikimedia Commons
+    </p>
   </footer>
 
   <script src="app.js"></script>
