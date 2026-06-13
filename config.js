@@ -38,16 +38,18 @@ window.APP_CONFIG = {
       sheetName: "Spielplan",
       headerRows: 1,
       columns: [],
-      filter: false,
+      showFromTeams: 4, // ganzer Abschnitt erst ab 4 angemeldeten Teams sichtbar
+      guardFormFallback: true, // ausblenden, falls das "Spielplan"-Tab noch fehlt
       soft: true,
-      empty: "Der Spielplan wird kurz vor dem Turnier hier aufgeschaltet – sobald alle Anmeldungen da sind und die Gruppen feststehen.",
+      empty: "Der Spielplan wird erstellt, sobald die Gruppen feststehen.",
     },
     {
       mount: "teams",
       sheetName: "", // Tab mit den Formular-Antworten
       headerRows: 1,
       columns: ["Teamname", "Ort"], // ⚠ keine Namen/Tel./E-Mail öffentlich zeigen
-      filter: true,
+      labels: { Teamname: "Team" }, // Spaltenüberschrift "Teamname" → "Team"
+      filter: false,
       soft: true,
       empty: "Noch keine Anmeldungen – sei das erste Team! 🏑",
     },
@@ -56,9 +58,8 @@ window.APP_CONFIG = {
       sheetName: "Resultate",
       headerRows: 1,
       columns: [],
-      filter: false,
-      soft: true,
-      empty: "Sobald gespielt wird, erscheinen hier die Resultate und die Rangliste – live.",
+      hideWhenEmpty: true, // ganzer Abschnitt nur sichtbar, wenn es Resultate gibt
+      guardFormFallback: true, // ausblenden, falls das "Resultate"-Tab noch fehlt (PII-Schutz)
     },
   ],
 };

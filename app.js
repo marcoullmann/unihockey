@@ -126,6 +126,9 @@ function SheetSection(opts) {
 
   root.append(bar, status, tableWrap, meta);
 
+  const wrapSection = root.closest("section");
+  const showSection = (v) => { if (wrapSection) wrapSection.style.display = v ? "" : "none"; };
+
   function setStatus(msg, kind) {
     status.className = "sheet-status" + (kind ? " " + kind : "");
     status.innerHTML = msg;
@@ -199,7 +202,7 @@ function SheetSection(opts) {
 
   async function load() {
     const url = buildUrl(opts.sheetName, opts.headerRows);
-    if (!url) { setStatus("Keine Datenquelle konfiguriert.", "error"); return; }
+    if (!url) { setStatus("Keine Datenquelle konfiguriert.", "error"); return 0; }
 
     bar.style.display = "flex";
     setStatus("Lädt…", "");
@@ -219,16 +222,34 @@ function SheetSection(opts) {
         label: (c.label && c.label.trim()) || `Spalte ${i + 1}`,
         type: c.type, idx: i,
       }));
+
+      // gviz liefert bei NICHT existierendem Tab das erste Tab (Formular-Antworten)
+      // zurück. Solche Sektionen ausblenden, statt versehentlich PII (Name/Tel./
+      // E-Mail) zu zeigen. Greift, bis das echte Tab (z.B. "Resultate") existiert.
+      if (opts.guardFormFallback) {
+        const low = allCols.map((c) => c.label.toLowerCase());
+        const isFormTab = low.includes("zeitstempel") &&
+          (low.includes("whatsapp telefonnummer") || low.includes("e-mail-adresse"));
+        if (isFormTab) { showSection(false); return 0; }
+      }
+
       columns = pickColumns(allCols, opts.columns);
+      if (opts.labels) columns.forEach((c) => { if (opts.labels[c.label]) c.label = opts.labels[c.label]; });
       rows = (data.table.rows || []).map((r) => (r.c || []).map(cellText));
       sortCol = -1;
+
+      // Abschnitt ausblenden, wenn leer und so konfiguriert (z.B. Resultate).
+      if (opts.hideWhenEmpty && rows.length === 0) { showSection(false); return 0; }
+      showSection(true);
       render();
 
       if (rows.length) {
         const t = new Date().toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" });
         meta.textContent = `${rows.length} Einträge · aktualisiert ${t}`;
       }
+      return rows.length;
     } catch (err) {
+      if (opts.hideWhenEmpty) { showSection(false); return 0; }
       // Fehlendes Tab o.ä. → freundliche Meldung statt Fehler.
       if (opts.soft) {
         setStatus(opts.empty || "Wird noch aufgeschaltet.", "soft");
@@ -238,13 +259,40 @@ function SheetSection(opts) {
           "error"
         );
       }
+      return 0;
     }
   }
 
   refresh.addEventListener("click", load);
   if (searchEl) searchEl.addEventListener("input", render);
-  load();
+  return { load, opts };
 }
 
-// ── Alle konfigurierten Sektionen starten ────────────────────
-(cfg.SECTIONS || []).forEach((s) => SheetSection(s));
+// ── Sektionen orchestrieren ──────────────────────────────────
+(async function () {
+  const sections = cfg.SECTIONS || [];
+  const inst = {};
+  sections.forEach((s) => { inst[s.mount] = SheetSection(s); });
+
+  // Teams zuerst laden, um die Anzahl angemeldeter Teams zu kennen.
+  let teamCount = 0;
+  if (inst.teams) teamCount = (await inst.teams.load()) || 0;
+
+  // Spielplan: ganzer Abschnitt erst ab N Teams.
+  if (inst.spielplan) {
+    const need = inst.spielplan.opts.showFromTeams || 0;
+    const sec = document.getElementById(inst.spielplan.opts.mount).closest("section");
+    if (teamCount >= need) {
+      if (sec) sec.style.display = "";
+      await inst.spielplan.load();
+    } else if (sec) {
+      sec.style.display = "none";
+    }
+  }
+
+  // Restliche Sektionen (Resultate blendet sich selbst aus, wenn leer).
+  for (const s of sections) {
+    if (s.mount === "teams" || s.mount === "spielplan") continue;
+    if (inst[s.mount]) await inst[s.mount].load();
+  }
+})();
