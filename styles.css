@@ -229,6 +229,12 @@ tbody tr:hover { background: #eef6ec; }
 }
 .cta-band h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); }
 .cta-band p { max-width: 560px; margin: 14px auto 28px; color: rgba(255,255,255,.92); font-size: 1.1rem; }
+.cta-band .cta-deadline {
+  margin: 22px auto 0; font-size: 1rem; font-weight: 700;
+  display: inline-block; padding: 10px 20px; border-radius: 999px;
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
+  color: #fff;
+}
 
 /* ── Galerie ───────────────────────────────────────────────── */
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
