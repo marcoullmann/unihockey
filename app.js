@@ -4,14 +4,22 @@ const cfg = window.APP_CONFIG || {};
 const el = (id) => document.getElementById(id);
 
 // State
-let columns = [];      // [{ label, type }]
-let rows = [];         // [[cell, cell, ...]]
-let sortCol = -1;
+let columns = [];      // [{ label, type, idx }]  (idx = original column index)
+let rows = [];         // [[cell, cell, ...]]  (full, unfiltered by column)
+let sortCol = -1;      // index into `columns`
 let sortDir = 1;       // 1 asc, -1 desc
 
 // Apply config to the page chrome
 if (cfg.TITLE) { el("title").textContent = cfg.TITLE; document.title = cfg.TITLE; }
 if (cfg.SUBTITLE) { el("subtitle").textContent = cfg.SUBTITLE; }
+if (cfg.TABLE_TITLE) { el("table-title").textContent = cfg.TABLE_TITLE; }
+
+const cta = el("cta");
+if (cfg.FORM_URL) {
+  cta.href = cfg.FORM_URL;
+  if (cfg.CTA_LABEL) cta.textContent = cfg.CTA_LABEL;
+  cta.hidden = false;
+}
 
 function setStatus(msg, isError) {
   const s = el("status");
@@ -19,19 +27,18 @@ function setStatus(msg, isError) {
   s.innerHTML = msg;
 }
 
-// Build the gviz endpoint URL. This works for any sheet shared as
-// "Anyone with the link can view" — no API key required.
+// gviz endpoint — works for any sheet shared "Anyone with the link → Viewer".
 function buildUrl() {
   const id = (cfg.SHEET_ID || "").trim();
   if (!id) return null;
   let url = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(id)}/gviz/tq?tqx=out:json`;
-  if (cfg.SHEET_NAME && cfg.SHEET_NAME.trim()) {
-    url += `&sheet=${encodeURIComponent(cfg.SHEET_NAME.trim())}`;
-  }
+  if (cfg.SHEET_NAME && cfg.SHEET_NAME.trim()) url += `&sheet=${encodeURIComponent(cfg.SHEET_NAME.trim())}`;
+  const headers = Number.isInteger(cfg.HEADER_ROWS) ? cfg.HEADER_ROWS : 1;
+  url += `&headers=${headers}`;
   return url;
 }
 
-// The gviz response is wrapped like:  /*O_o*/ google.visualization.Query.setResponse({...});
+// gviz wraps the JSON: /*O_o*/ google.visualization.Query.setResponse({...});
 function parseGviz(text) {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
@@ -41,24 +48,32 @@ function parseGviz(text) {
 
 function cellText(cell) {
   if (cell == null) return "";
-  if (cell.f != null) return cell.f;          // formatted value if present
+  if (cell.f != null) return cell.f;
   if (cell.v == null) return "";
   return String(cell.v);
+}
+
+// Restrict to the COLUMNS allowlist (by header label), preserving its order.
+// Empty / missing allowlist => show every column.
+function pickColumns(allCols) {
+  const allow = Array.isArray(cfg.COLUMNS) ? cfg.COLUMNS : [];
+  if (allow.length === 0) return allCols;
+  const out = [];
+  allow.forEach((wanted) => {
+    const match = allCols.find((c) => c.label.toLowerCase() === wanted.toLowerCase());
+    if (match) out.push(match);
+  });
+  return out;
 }
 
 async function load() {
   const url = buildUrl();
   if (!url) {
-    setStatus(
-      "No sheet configured yet. Open <code>config.js</code>, set <code>SHEET_ID</code> " +
-      "to the id from your Google Sheet URL, make sure the sheet is shared as " +
-      "“Anyone with the link → Viewer”, then refresh.",
-      true
-    );
+    setStatus("No sheet configured yet. Set <code>SHEET_ID</code> in <code>config.js</code>.", true);
     return;
   }
 
-  setStatus("Loading…");
+  setStatus("Lädt…");
   el("table").hidden = true;
 
   try {
@@ -71,30 +86,23 @@ async function load() {
       throw new Error(reason);
     }
 
-    columns = (data.table.cols || []).map((c, i) => ({
-      label: (c.label && c.label.trim()) || `Column ${i + 1}`,
+    const allCols = (data.table.cols || []).map((c, i) => ({
+      label: (c.label && c.label.trim()) || `Spalte ${i + 1}`,
       type: c.type,
+      idx: i,
     }));
-    rows = (data.table.rows || []).map((r) => (r.c || []).map(cellText));
 
-    // Drop fully-empty trailing columns (common with Google Sheets)
-    while (columns.length && rows.every((r) => !((r[columns.length - 1] || "").trim()))) {
-      const last = columns.length - 1;
-      if (columns[last].label.startsWith("Column ")) {
-        columns.pop();
-        rows.forEach((r) => r.pop());
-      } else break;
-    }
+    columns = pickColumns(allCols);
+    rows = (data.table.rows || []).map((r) => (r.c || []).map(cellText));
 
     sortCol = -1;
     render();
-    const when = new Date().toLocaleTimeString();
-    el("meta").textContent = `${rows.length} rows · updated ${when}`;
+    const when = new Date().toLocaleTimeString("de-CH");
+    el("meta").textContent = `${rows.length} Team${rows.length === 1 ? "" : "s"} · ${when}`;
   } catch (err) {
     setStatus(
-      `Could not load the sheet: <code>${escapeHtml(err.message)}</code>.<br>` +
-      "Check that <code>SHEET_ID</code> is correct and the sheet is shared as " +
-      "“Anyone with the link → Viewer”.",
+      `Daten konnten nicht geladen werden: <code>${escapeHtml(err.message)}</code>.<br>` +
+      "Ist die Tabelle als „Jeder mit dem Link → Betrachter“ freigegeben?",
       true
     );
     el("meta").textContent = "";
@@ -103,14 +111,15 @@ async function load() {
 
 function render() {
   const filter = el("search").value.trim().toLowerCase();
+  const cols = columns;
 
-  let view = rows;
-  if (filter) {
-    view = rows.filter((r) => r.some((c) => c.toLowerCase().includes(filter)));
-  }
+  // Project each row down to the visible columns.
+  let view = rows.map((r) => cols.map((c) => r[c.idx] || ""));
+
+  if (filter) view = view.filter((r) => r.some((c) => c.toLowerCase().includes(filter)));
 
   if (sortCol >= 0) {
-    const numeric = columns[sortCol] && columns[sortCol].type === "number";
+    const numeric = cols[sortCol] && cols[sortCol].type === "number";
     view = view.slice().sort((a, b) => {
       let x = a[sortCol] || "", y = b[sortCol] || "";
       if (numeric) {
@@ -118,7 +127,7 @@ function render() {
         y = parseFloat(y.replace(/[^0-9.\-]/g, "")) || 0;
         return (x - y) * sortDir;
       }
-      return x.localeCompare(y, undefined, { numeric: true }) * sortDir;
+      return x.localeCompare(y, "de", { numeric: true }) * sortDir;
     });
   }
 
@@ -126,7 +135,7 @@ function render() {
   const thead = el("thead");
   thead.innerHTML = "";
   const tr = document.createElement("tr");
-  columns.forEach((c, i) => {
+  cols.forEach((c, i) => {
     const th = document.createElement("th");
     th.textContent = c.label;
     if (i === sortCol) {
@@ -150,20 +159,22 @@ function render() {
   const frag = document.createDocumentFragment();
   view.forEach((r) => {
     const row = document.createElement("tr");
-    columns.forEach((_, i) => {
+    r.forEach((cell) => {
       const td = document.createElement("td");
-      td.textContent = r[i] || "";
+      td.textContent = cell;
       row.appendChild(td);
     });
     frag.appendChild(row);
   });
   tbody.appendChild(frag);
 
-  el("table").hidden = columns.length === 0;
-  if (columns.length === 0) {
-    setStatus("The sheet appears to be empty.", false);
+  el("table").hidden = cols.length === 0 || view.length === 0;
+  if (cols.length === 0) {
+    setStatus("Keine Spalten konfiguriert.", false);
+  } else if (rows.length === 0) {
+    setStatus("Noch keine Anmeldungen – sei das erste Team! 🏑", false);
   } else if (view.length === 0) {
-    setStatus(filter ? "No rows match your filter." : "No data rows.", false);
+    setStatus("Kein Team passt zum Filter.", false);
   } else {
     setStatus("");
   }

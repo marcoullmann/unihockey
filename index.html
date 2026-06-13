@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unihockey</title>
-  <meta name="description" content="One-page site showing data from a Google Sheet." />
+  <title>Unihockey – Anmeldung</title>
+  <meta name="description" content="Melde dein Unihockey-Team an und sieh, welche Teams schon dabei sind." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏑</text></svg>" />
   <link rel="stylesheet" href="styles.css" />
   <script src="config.js"></script>
@@ -12,14 +12,17 @@
 <body>
   <header class="hero">
     <h1 id="title">Unihockey</h1>
-    <p id="subtitle">Live data from Google Sheets</p>
+    <p id="subtitle">Melde dein Team an – und sieh, wer schon dabei ist.</p>
+    <a id="cta" class="cta" href="#" target="_blank" rel="noopener" hidden>Team anmelden</a>
   </header>
 
   <main>
-    <div class="toolbar">
-      <input id="search" type="search" placeholder="Filter rows…" autocomplete="off" />
-      <button id="refresh" type="button" title="Reload data">↻ Refresh</button>
+    <div class="section-head">
+      <h2 id="table-title">Angemeldete Teams</h2>
+      <button id="refresh" type="button" title="Neu laden">↻</button>
     </div>
+
+    <input id="search" type="search" placeholder="Team filtern…" autocomplete="off" />
 
     <div id="status" class="status" role="status"></div>
 
