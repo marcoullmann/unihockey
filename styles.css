@@ -87,16 +87,17 @@ a { color: var(--green-d); text-decoration: none; }
   background-image: radial-gradient(rgba(255,255,255,.10) 1.4px, transparent 1.4px);
   background-size: 26px 26px; opacity: .5;
 }
-.hero.has-photo .hero-bg { background-size: cover; background-position: center 42%; }
-.hero.has-photo .hero-bg::after { background: linear-gradient(180deg, rgba(13,60,30,.45) 0%, rgba(10,45,55,.62) 60%, rgba(8,40,60,.78) 100%); background-size: cover; }
+.hero.has-photo .hero-bg { background-size: cover; background-position: center 40%; }
+.hero.has-photo .hero-bg::after { display: none; } /* kein zweites Overlay über dem Foto */
 
 .hero-video {
   position: absolute; inset: 0; z-index: 0;
   width: 100%; height: 100%; object-fit: cover;
 }
+/* Ein einziges, dezentes Overlay für Lesbarkeit – nicht zu dunkel. */
 .hero-scrim {
   position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(180deg, rgba(13,60,30,.42) 0%, rgba(10,45,55,.58) 55%, rgba(8,40,60,.78) 100%);
+  background: linear-gradient(172deg, rgba(8,26,16,.28) 0%, rgba(8,30,46,.46) 52%, rgba(6,22,36,.70) 100%);
 }
 
 .hero-inner { position: relative; z-index: 2; max-width: 940px; margin: 0 auto; }
@@ -106,7 +107,8 @@ a { color: var(--green-d); text-decoration: none; }
   padding: 7px 16px; border-radius: 999px; font-weight: 600; font-size: .9rem;
   letter-spacing: .02em; margin-bottom: 22px;
 }
-.hero h1 { font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800; letter-spacing: -.02em; text-shadow: 0 6px 24px rgba(0,0,0,.2); }
+.hero h1 { font-size: clamp(1.4rem, 6.8vw, 5rem); font-weight: 800; letter-spacing: -.02em; overflow-wrap: break-word; hyphens: auto; text-shadow: 0 2px 14px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4); }
+.hero .kicker, .hero .lead { text-shadow: 0 1px 6px rgba(0,0,0,.4); }
 .hero h1 .accent { color: var(--sun); }
 .hero .lead { max-width: 640px; margin: 20px auto 0; font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: rgba(255,255,255,.94); }
 
@@ -123,7 +125,12 @@ a { color: var(--green-d); text-decoration: none; }
 .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
 
 .hero-stick { position: absolute; right: -10px; bottom: -20px; width: 230px; height: 230px; z-index: 1; opacity: .9; pointer-events: none; }
-@media (max-width: 760px) { .hero-stick { width: 150px; height: 150px; opacity: .5; } }
+@media (max-width: 760px) {
+  .hero { padding: 56px 18px 64px; }
+  .hero-stick { width: 140px; height: 140px; opacity: .45; }
+  /* Auf dem Handy kein Video (Autoplay unzuverlässig, spart Daten) → das Foto wird gezeigt. */
+  .hero-video { display: none; }
+}
 
 /* ── Sections ──────────────────────────────────────────────── */
 .section { max-width: 1040px; margin: 0 auto; padding: 64px 22px; }

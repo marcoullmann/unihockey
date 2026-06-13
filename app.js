@@ -13,7 +13,6 @@ if (cfg.HERO_VIDEO) {
   v.src = cfg.HERO_VIDEO;
   if (cfg.HERO_IMAGE) v.poster = cfg.HERO_IMAGE;
   v.hidden = false;
-  $("#hero-scrim").hidden = false;
   const p = v.play();
   if (p && p.catch) p.catch(() => {}); // Autoplay-Block ignorieren, Bild bleibt sichtbar
 }
