@@ -7,3 +7,6 @@ node_modules/
 
 # Original-Fotos/Videos vom Handy (gross) — nur optimierte Ableitungen kommen ins Repo
 images/IMG_*
+
+# Turnier-Tabellen (Arbeitsdateien, gehören nicht ins öffentliche Repo)
+*.xlsx
