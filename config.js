@@ -34,16 +34,6 @@ window.APP_CONFIG = {
   // soft       = wenn das Tab (noch) nicht existiert, freundliche Meldung statt Fehler
   SECTIONS: [
     {
-      mount: "spielplan",
-      sheetName: "Spielplan",
-      headerRows: 1,
-      columns: [],
-      showFromTeams: 4, // ganzer Abschnitt erst ab 4 angemeldeten Teams sichtbar
-      guardFormFallback: true, // ausblenden, falls das "Spielplan"-Tab noch fehlt
-      soft: true,
-      empty: "Der Spielplan wird erstellt, sobald die Gruppen feststehen.",
-    },
-    {
       mount: "teams",
       sheetName: "", // Tab mit den Formular-Antworten
       headerRows: 1,
@@ -53,13 +43,15 @@ window.APP_CONFIG = {
       soft: true,
       empty: "Noch keine Anmeldungen – sei das erste Team! 🏑",
     },
-    {
-      mount: "resultate",
-      sheetName: "Resultate",
-      headerRows: 1,
-      columns: [],
-      hideWhenEmpty: true, // ganzer Abschnitt nur sichtbar, wenn es Resultate gibt
-      guardFormFallback: true, // ausblenden, falls das "Resultate"-Tab noch fehlt (PII-Schutz)
-    },
   ],
+
+  // ── Spielplan & Tabelle aus dem "Ergebnisse"-Blatt ──────────────────────────
+  // Beides wird live aus dem Tab "Ergebnisse" gelesen und im Website-Design
+  // dargestellt. Beide Ansichten sind ausgeblendet, bis du sie hier einschaltest
+  // (z.B. sobald alle Teams feststehen). Einfach auf "true" setzen.
+  RESULTS: {
+    sheetName: "Ergebnisse",
+    showSpielplan: false, // Spielplan inkl. Resultate einblenden
+    showTabelle: false,   // Tabelle / Rangliste einblenden
+  },
 };

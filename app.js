@@ -263,31 +263,138 @@ function SheetSection(opts) {
   return { load, opts };
 }
 
+// ── Spielplan & Tabelle aus dem "Ergebnisse"-Blatt ───────────
+// Das "Ergebnisse"-Tab ist eine Turnier-Vorlage mit fixem Spalten-Layout, aber
+// variabler Zeilenzahl (je nach Anzahl Teams/Spiele). Wir verankern uns deshalb
+// an Markern statt an festen Zeilen:
+//   • Spielplan  = jede Zeile mit Heim (Spalte E/idx4) UND Gast (Spalte G/idx6).
+//                  Resultat steht in idx7 (Heim) ":" idx9 (Gast).
+//   • Tabelle    = ab der Kopfzeile mit "SP","G","U","V" (idx13–16); Teamnamen in
+//                  Spalte M/idx12, Werte rechts daneben, bis der Teamname leer ist.
+function parseErgebnisse(rows) {
+  const t = (r, i) => ((r[i] || "") + "").trim();
+  const games = [];
+  let headerRow = -1;
+
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const heim = t(r, 4), gast = t(r, 6);
+    if (heim && gast) {
+      const hs = t(r, 7), as = t(r, 9);
+      games.push({
+        nr: t(r, 1),
+        zeit: t(r, 2),
+        heim, gast,
+        score: hs !== "" || as !== "" ? `${hs} : ${as}` : "–",
+      });
+    }
+    // erste Tabellen-Kopfzeile merken (nicht die "(Kopie)"-Blöcke weiter unten)
+    if (headerRow < 0 &&
+        t(r, 13).toUpperCase() === "SP" &&
+        t(r, 14).toUpperCase() === "G" &&
+        t(r, 21).toUpperCase() === "PKT") {
+      headerRow = i;
+    }
+  }
+
+  const standings = [];
+  if (headerRow >= 0) {
+    for (let i = headerRow + 1; i < rows.length; i++) {
+      const team = t(rows[i], 12);
+      if (!team) break; // erster Block endet bei der ersten leeren Zeile
+      const r = rows[i];
+      const tf = t(r, 17), ta = t(r, 19);
+      standings.push({
+        team,
+        sp: t(r, 13), g: t(r, 14), u: t(r, 15), v: t(r, 16),
+        tore: tf !== "" || ta !== "" ? `${tf}:${ta}` : "–",
+        diff: t(r, 20), pkt: t(r, 21),
+      });
+    }
+  }
+  return { games, standings };
+}
+
+function tableHtml(headers, rows) {
+  let h = '<div class="table-wrap"><table><thead><tr>';
+  headers.forEach((c) => { h += `<th>${escapeHtml(c)}</th>`; });
+  h += "</tr></thead><tbody>";
+  rows.forEach((cells) => {
+    h += "<tr>";
+    cells.forEach((c) => { h += `<td>${escapeHtml(c)}</td>`; });
+    h += "</tr>";
+  });
+  return h + "</tbody></table></div>";
+}
+
+function renderSpielplan(games) {
+  const mount = document.getElementById("spielplan");
+  if (!mount) return;
+  if (!games.length) {
+    mount.innerHTML = '<div class="sheet-status soft">Der Spielplan wird gerade erstellt.</div>';
+    return;
+  }
+  mount.innerHTML = tableHtml(
+    ["Nr", "Zeit", "Heim", "Gast", "Resultat"],
+    games.map((g) => [g.nr, g.zeit, g.heim, g.gast, g.score])
+  );
+}
+
+function renderTabelle(standings) {
+  const mount = document.getElementById("tabelle");
+  if (!mount) return;
+  if (!standings.length) {
+    mount.innerHTML = '<div class="sheet-status soft">Die Tabelle erscheint, sobald Resultate erfasst sind.</div>';
+    return;
+  }
+  const num = (v) => { const n = parseFloat(String(v).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? 0 : n; };
+  const sorted = standings.slice().sort((a, b) => num(b.pkt) - num(a.pkt) || num(b.diff) - num(a.diff));
+  mount.innerHTML = tableHtml(
+    ["#", "Team", "SP", "G", "U", "V", "Tore", "Diff", "Pkt"],
+    sorted.map((r, i) => [String(i + 1), r.team, r.sp, r.g, r.u, r.v, r.tore, r.diff, r.pkt])
+  );
+}
+
+async function loadResults(rc) {
+  if (!rc || (!rc.showSpielplan && !rc.showTabelle)) return; // beide Abschnitte bleiben versteckt
+  const url = buildUrl(rc.sheetName || "Ergebnisse", 1);
+  if (!url) return;
+
+  let rows;
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = parseGviz(await res.text());
+    if (data.status === "error") throw new Error("gviz error");
+    rows = (data.table.rows || []).map((r) => (r.c || []).map(cellText));
+  } catch (err) {
+    return; // bei Fehlern bleiben die Abschnitte einfach ausgeblendet
+  }
+
+  const { games, standings } = parseErgebnisse(rows);
+  if (rc.showSpielplan) {
+    renderSpielplan(games);
+    const sec = document.getElementById("spielplan-sec");
+    if (sec) sec.style.display = "";
+  }
+  if (rc.showTabelle) {
+    renderTabelle(standings);
+    const sec = document.getElementById("tabelle-sec");
+    if (sec) sec.style.display = "";
+  }
+}
+
 // ── Sektionen orchestrieren ──────────────────────────────────
 (async function () {
   const sections = cfg.SECTIONS || [];
   const inst = {};
   sections.forEach((s) => { inst[s.mount] = SheetSection(s); });
 
-  // Teams zuerst laden, um die Anzahl angemeldeter Teams zu kennen.
-  let teamCount = 0;
-  if (inst.teams) teamCount = (await inst.teams.load()) || 0;
-
-  // Spielplan: ganzer Abschnitt erst ab N Teams.
-  if (inst.spielplan) {
-    const need = inst.spielplan.opts.showFromTeams || 0;
-    const sec = document.getElementById(inst.spielplan.opts.mount).closest("section");
-    if (teamCount >= need) {
-      if (sec) sec.style.display = "";
-      await inst.spielplan.load();
-    } else if (sec) {
-      sec.style.display = "none";
-    }
-  }
-
-  // Restliche Sektionen (Resultate blendet sich selbst aus, wenn leer).
+  // Angemeldete Teams (und allfällige weitere generische Sektionen).
   for (const s of sections) {
-    if (s.mount === "teams" || s.mount === "spielplan") continue;
     if (inst[s.mount]) await inst[s.mount].load();
   }
+
+  // Spielplan & Tabelle aus dem "Ergebnisse"-Blatt (eigene Darstellung).
+  await loadResults(cfg.RESULTS);
 })();

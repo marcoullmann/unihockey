@@ -19,8 +19,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=10" />
-  <script src="config.js?v=10"></script>
+  <link rel="stylesheet" href="styles.css?v=11" />
+  <script src="config.js?v=11"></script>
 </head>
 <body>
 
@@ -31,7 +31,7 @@
       <a href="#infos">Infos</a>
       <a href="#regeln">Regeln</a>
       <a href="#spielplan-sec">Spielplan</a>
-      <a href="#resultate-sec">Resultate</a>
+      <a href="#tabelle-sec">Tabelle</a>
       <a href="#anfahrt">Anfahrt</a>
     </div>
     <a class="nav-cta" id="nav-cta" href="#anmelden">Anmelden</a>
@@ -144,11 +144,11 @@
       </div>
     </section>
 
-    <!-- ── Spielplan (dynamisch) ───────────────────────────────── -->
+    <!-- ── Spielplan & Resultate (dynamisch aus "Ergebnisse") ──── -->
     <section id="spielplan-sec" class="section" style="display:none">
       <div class="section-head">
         <span class="eyebrow">Live aus dem Sheet</span>
-        <h2>Spielplan</h2>
+        <h2>Spielplan &amp; Resultate</h2>
       </div>
       <div id="spielplan" class="sheet-section"></div>
     </section>
@@ -162,13 +162,13 @@
       <div id="teams" class="sheet-section"></div>
     </section>
 
-    <!-- ── Resultate (dynamisch) ───────────────────────────────── -->
-    <section id="resultate-sec" class="section" style="display:none">
+    <!-- ── Tabelle / Rangliste (dynamisch aus "Ergebnisse") ────── -->
+    <section id="tabelle-sec" class="section" style="display:none">
       <div class="section-head">
         <span class="eyebrow">Live während des Turniers</span>
-        <h2>Resultate &amp; Rangliste</h2>
+        <h2>Tabelle</h2>
       </div>
-      <div id="resultate" class="sheet-section"></div>
+      <div id="tabelle" class="sheet-section"></div>
     </section>
 
     <!-- ── Galerie (optional) ──────────────────────────────────── -->
@@ -238,6 +238,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
