@@ -355,8 +355,22 @@ function renderTabelle(standings) {
   );
 }
 
+// Vorschau-Modus: mit "?preview" (oder "?vorschau") in der URL werden Spielplan
+// und Tabelle eingeblendet, auch wenn sie für normale Besucher noch aus sind.
+// So kannst du alles testen, ohne die Config zu ändern oder zu deployen.
+function previewMode() {
+  try {
+    const p = new URLSearchParams(location.search);
+    return p.has("preview") || p.has("vorschau");
+  } catch (e) { return false; }
+}
+
 async function loadResults(rc) {
-  if (!rc || (!rc.showSpielplan && !rc.showTabelle)) return; // beide Abschnitte bleiben versteckt
+  if (!rc) return;
+  const preview = previewMode();
+  const showSpielplan = rc.showSpielplan || preview;
+  const showTabelle = rc.showTabelle || preview;
+  if (!showSpielplan && !showTabelle) return; // beide Abschnitte bleiben versteckt
   const url = buildUrl(rc.sheetName || "Ergebnisse", 1);
   if (!url) return;
 
@@ -372,15 +386,19 @@ async function loadResults(rc) {
   }
 
   const { games, standings } = parseErgebnisse(rows);
-  if (rc.showSpielplan) {
+  // Im Vorschau-Modus einen Hinweis einblenden, der für Besucher nicht da ist.
+  const previewNote = preview
+    ? '<div class="preview-note">🔍 Vorschau – für Besucher noch ausgeblendet</div>'
+    : "";
+  if (showSpielplan) {
     renderSpielplan(games);
     const sec = document.getElementById("spielplan-sec");
-    if (sec) sec.style.display = "";
+    if (sec) { sec.style.display = ""; if (previewNote) sec.insertAdjacentHTML("afterbegin", previewNote); }
   }
-  if (rc.showTabelle) {
+  if (showTabelle) {
     renderTabelle(standings);
     const sec = document.getElementById("tabelle-sec");
-    if (sec) sec.style.display = "";
+    if (sec) { sec.style.display = ""; if (previewNote) sec.insertAdjacentHTML("afterbegin", previewNote); }
   }
 }
 
