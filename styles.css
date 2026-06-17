@@ -240,6 +240,10 @@ tbody tr:hover { background: #eef6ec; }
   background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
   color: #fff;
 }
+.cta-band .cta-pills {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 22px;
+}
+.cta-band .cta-pills .cta-deadline { margin: 0; }
 
 /* ── Galerie ───────────────────────────────────────────────── */
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
