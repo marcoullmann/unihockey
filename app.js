@@ -477,7 +477,11 @@ async function loadResults(rc) {
     ? '<div class="preview-note">🔍 Vorschau – für Besucher noch ausgeblendet</div>'
     : "";
   if (showSpielplan) {
-    const final = parseFinal(await fetchSheetRows(rc.finalSheetName || "Finalspiel"));
+    // Final erst zeigen, wenn ALLE Gruppenspiele ein Resultat haben.
+    const allPlayed = games.length > 0 && games.every((g) => g.score !== "–");
+    const final = allPlayed
+      ? parseFinal(await fetchSheetRows(rc.finalSheetName || "Finalspiel"))
+      : null;
     renderSpielplan(games, final);
     const sec = document.getElementById("spielplan-sec");
     if (sec) { sec.style.display = ""; if (previewNote) sec.insertAdjacentHTML("afterbegin", previewNote); }

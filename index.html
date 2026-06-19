@@ -19,8 +19,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=15" />
-  <script src="config.js?v=15"></script>
+  <link rel="stylesheet" href="styles.css?v=16" />
+  <script src="config.js?v=16"></script>
 </head>
 <body>
 
@@ -153,22 +153,22 @@
       <div id="spielplan" class="sheet-section"></div>
     </section>
 
-    <!-- ── Angemeldete Teams (dynamisch) ───────────────────────── -->
-    <section id="teams-sec" class="section section-tint">
-      <div class="section-head">
-        <span class="eyebrow">Wer schon dabei ist</span>
-        <h2>Angemeldete Teams</h2>
-      </div>
-      <div id="teams" class="sheet-section"></div>
-    </section>
-
     <!-- ── Tabelle / Rangliste (dynamisch aus "Ergebnisse") ────── -->
-    <section id="tabelle-sec" class="section" style="display:none">
+    <section id="tabelle-sec" class="section section-tint" style="display:none">
       <div class="section-head">
         <span class="eyebrow">Live während des Turniers</span>
         <h2>Tabelle</h2>
       </div>
       <div id="tabelle" class="sheet-section"></div>
+    </section>
+
+    <!-- ── Angemeldete Teams (dynamisch) ───────────────────────── -->
+    <section id="teams-sec" class="section">
+      <div class="section-head">
+        <span class="eyebrow">Wer schon dabei ist</span>
+        <h2>Angemeldete Teams</h2>
+      </div>
+      <div id="teams" class="sheet-section"></div>
     </section>
 
     <!-- ── Galerie (optional) ──────────────────────────────────── -->
@@ -242,6 +242,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>
