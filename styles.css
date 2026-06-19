@@ -247,6 +247,8 @@ tbody tr:hover { background: #eef6ec; }
   padding: 6px 18px; font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .final-time { color: var(--muted); font-size: .85rem; margin-top: 10px; }
+.final-team.final-tbd { color: var(--muted); font-weight: 800; }
+.final-note { color: var(--muted); font-size: .85rem; margin-top: 10px; }
 
 /* ── CTA-Band ──────────────────────────────────────────────── */
 .cta-band {

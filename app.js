@@ -367,30 +367,39 @@ function tableHtml(headers, rows) {
 }
 
 // Eigenständig gerendertes Final-Spiel (aus dem "Finalspiel"-Blatt). Wird unter
-// dem Spielplan etwas abgesetzt dargestellt; der Sieger erhält ein 🏆.
-function finalBlockHtml(f) {
-  const num = (v) => { const n = parseFloat(String(v).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
-  const h = num(f.hs), a = num(f.as);
-  let homeWin = false, awayWin = false;
-  if (h !== null && a !== null && h !== a) { homeWin = h > a; awayWin = a > h; }
-  const cup = ' <span class="final-cup" role="img" aria-label="Sieger">🏆</span>';
-  const heim = escapeHtml(f.heim) + (homeWin ? cup : "");
-  const gast = escapeHtml(f.gast) + (awayWin ? cup : "");
+// dem Spielplan etwas abgesetzt dargestellt. Solange noch nicht alle Gruppenspiele
+// gespielt sind (revealTeams=false), bleiben die Teamnamen verborgen ("?"); danach
+// erscheinen sie, und der Sieger erhält ein 🏆.
+function finalBlockHtml(f, revealTeams) {
   const zeit = f.zeit ? `<div class="final-time">🕒 ${escapeHtml(f.zeit)} Uhr</div>` : "";
+  let match, note = "";
+
+  if (revealTeams) {
+    const num = (v) => { const n = parseFloat(String(v).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
+    const h = num(f.hs), a = num(f.as);
+    let homeWin = false, awayWin = false;
+    if (h !== null && a !== null && h !== a) { homeWin = h > a; awayWin = a > h; }
+    const cup = ' <span class="final-cup" role="img" aria-label="Sieger">🏆</span>';
+    match =
+      `<span class="final-team${homeWin ? " winner" : ""}">${escapeHtml(f.heim)}${homeWin ? cup : ""}</span>` +
+      `<span class="final-score">${escapeHtml(f.score)}</span>` +
+      `<span class="final-team${awayWin ? " winner" : ""}">${escapeHtml(f.gast)}${awayWin ? cup : ""}</span>`;
+  } else {
+    const tbd = '<span class="final-team final-tbd">?</span>';
+    match = tbd + '<span class="final-score">–</span>' + tbd;
+    note = '<div class="final-note">Die Finalteams stehen fest, sobald alle Gruppenspiele gespielt sind.</div>';
+  }
+
   return (
     '<div class="final-block">' +
       '<div class="final-label">🏆 Final</div>' +
-      '<div class="final-match">' +
-        `<span class="final-team${homeWin ? " winner" : ""}">${heim}</span>` +
-        `<span class="final-score">${escapeHtml(f.score)}</span>` +
-        `<span class="final-team${awayWin ? " winner" : ""}">${gast}</span>` +
-      "</div>" +
-      zeit +
+      '<div class="final-match">' + match + "</div>" +
+      note + zeit +
     "</div>"
   );
 }
 
-function renderSpielplan(games, final) {
+function renderSpielplan(games, final, revealTeams) {
   const mount = document.getElementById("spielplan");
   if (!mount) return;
   let html = games.length
@@ -399,7 +408,7 @@ function renderSpielplan(games, final) {
         games.map((g) => [g.nr, g.zeit, g.heim, g.gast, g.score])
       )
     : '<div class="sheet-status soft">Der Spielplan wird gerade erstellt.</div>';
-  if (final) html += finalBlockHtml(final);
+  if (final) html += finalBlockHtml(final, revealTeams);
   mount.innerHTML = html;
 }
 
@@ -464,25 +473,27 @@ function parseFinal(rows) {
 async function loadResults(rc) {
   if (!rc) return;
   const preview = previewMode();
-  const showSpielplan = rc.showSpielplan || preview;
-  const showTabelle = rc.showTabelle || preview;
-  if (!showSpielplan && !showTabelle) return; // beide Abschnitte bleiben versteckt
 
   const rows = await fetchSheetRows(rc.sheetName || "Ergebnisse");
   if (!rows) return; // bei Fehlern bleiben die Abschnitte einfach ausgeblendet
-
   const { games, standings } = parseErgebnisse(rows);
+
+  const anyPlayed = games.some((g) => g.score !== "–");           // mind. 1 Resultat
+  const allPlayed = games.length > 0 && games.every((g) => g.score !== "–");
+
+  const showSpielplan = rc.showSpielplan || preview;
+  // Tabelle erscheint automatisch, sobald das erste Resultat erfasst ist.
+  const showTabelle = rc.showTabelle || preview || anyPlayed;
+  if (!showSpielplan && !showTabelle) return;
+
   // Im Vorschau-Modus einen Hinweis einblenden, der für Besucher nicht da ist.
   const previewNote = preview
     ? '<div class="preview-note">🔍 Vorschau – für Besucher noch ausgeblendet</div>'
     : "";
   if (showSpielplan) {
-    // Final erst zeigen, wenn ALLE Gruppenspiele ein Resultat haben.
-    const allPlayed = games.length > 0 && games.every((g) => g.score !== "–");
-    const final = allPlayed
-      ? parseFinal(await fetchSheetRows(rc.finalSheetName || "Finalspiel"))
-      : null;
-    renderSpielplan(games, final);
+    // Final immer zeigen; Teamnamen aber erst, wenn alle Gruppenspiele gespielt sind.
+    const final = parseFinal(await fetchSheetRows(rc.finalSheetName || "Finalspiel"));
+    renderSpielplan(games, final, allPlayed);
     const sec = document.getElementById("spielplan-sec");
     if (sec) { sec.style.display = ""; if (previewNote) sec.insertAdjacentHTML("afterbegin", previewNote); }
   }
