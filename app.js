@@ -428,16 +428,6 @@ function renderTabelle(standings) {
   );
 }
 
-// Vorschau-Modus: mit "?preview" (oder "?vorschau") in der URL werden Spielplan
-// und Tabelle eingeblendet, auch wenn sie für normale Besucher noch aus sind.
-// So kannst du alles testen, ohne die Config zu ändern oder zu deployen.
-function previewMode() {
-  try {
-    const p = new URLSearchParams(location.search);
-    return p.has("preview") || p.has("vorschau");
-  } catch (e) { return false; }
-}
-
 // Holt die Zeilen eines Tabs als Array von Text-Arrays (oder null bei Fehler).
 async function fetchSheetRows(sheetName) {
   const url = buildUrl(sheetName, 1);
@@ -473,7 +463,6 @@ function parseFinal(rows) {
 
 async function loadResults(rc) {
   if (!rc) return;
-  const preview = previewMode();
 
   const rows = await fetchSheetRows(rc.sheetName || "Ergebnisse");
   if (!rows) return; // bei Fehlern bleiben die Abschnitte einfach ausgeblendet
@@ -482,24 +471,19 @@ async function loadResults(rc) {
   const anyPlayed = games.some((g) => g.score !== "–");           // mind. 1 Resultat
   const allPlayed = games.length > 0 && games.every((g) => g.score !== "–");
 
-  const showSpielplan = rc.showSpielplan || preview;
+  const showSpielplan = rc.showSpielplan;
   // Die Tabelle (ganze Sektion) erscheint erst, sobald das erste Resultat erfasst
   // ist – vorher bleibt sie komplett ausgeblendet (kein leerer Platzhalter). Die
   // Vorlage listet die Teams zwar immer auf, darum zusätzlich an anyPlayed koppeln.
   const showTabelle = anyPlayed && standings.length > 0;
   if (!showSpielplan && !showTabelle) return;
 
-  // Im Vorschau-Modus einen Hinweis einblenden, der für Besucher nicht da ist.
-  // Nur beim Spielplan sinnvoll – die Tabelle ist bei Resultaten für alle sichtbar.
-  const previewNote = preview
-    ? '<div class="preview-note">🔍 Vorschau – für Besucher noch ausgeblendet</div>'
-    : "";
   if (showSpielplan) {
     // Final immer zeigen; Teamnamen aber erst, wenn alle Gruppenspiele gespielt sind.
     const final = parseFinal(await fetchSheetRows(rc.finalSheetName || "Finalspiel"));
     renderSpielplan(games, final, allPlayed);
     const sec = document.getElementById("spielplan-sec");
-    if (sec) { sec.style.display = ""; if (previewNote) sec.insertAdjacentHTML("afterbegin", previewNote); }
+    if (sec) sec.style.display = "";
   }
   if (showTabelle) {
     renderTabelle(standings);
