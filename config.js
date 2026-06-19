@@ -58,6 +58,7 @@ window.APP_CONFIG = {
     sheetName: "Ergebnisse",
     finalSheetName: "Finalspiel", // Final wird unter dem Spielplan abgesetzt gezeigt
     showSpielplan: false, // Spielplan inkl. Resultate (und Final) einblenden
-    showTabelle: false,   // Tabelle / Rangliste einblenden
+    // Hinweis: Die Tabelle erscheint automatisch, sobald das erste Resultat im
+    // Blatt erfasst ist – dafür gibt es bewusst keinen Schalter mehr.
   },
 };

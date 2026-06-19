@@ -482,11 +482,14 @@ async function loadResults(rc) {
   const allPlayed = games.length > 0 && games.every((g) => g.score !== "–");
 
   const showSpielplan = rc.showSpielplan || preview;
-  // Tabelle erscheint automatisch, sobald das erste Resultat erfasst ist.
-  const showTabelle = rc.showTabelle || preview || anyPlayed;
+  // Die Tabelle (ganze Sektion) erscheint erst, sobald das erste Resultat erfasst
+  // ist – vorher bleibt sie komplett ausgeblendet (kein leerer Platzhalter). Die
+  // Vorlage listet die Teams zwar immer auf, darum zusätzlich an anyPlayed koppeln.
+  const showTabelle = anyPlayed && standings.length > 0;
   if (!showSpielplan && !showTabelle) return;
 
   // Im Vorschau-Modus einen Hinweis einblenden, der für Besucher nicht da ist.
+  // Nur beim Spielplan sinnvoll – die Tabelle ist bei Resultaten für alle sichtbar.
   const previewNote = preview
     ? '<div class="preview-note">🔍 Vorschau – für Besucher noch ausgeblendet</div>'
     : "";
@@ -500,7 +503,7 @@ async function loadResults(rc) {
   if (showTabelle) {
     renderTabelle(standings);
     const sec = document.getElementById("tabelle-sec");
-    if (sec) { sec.style.display = ""; if (previewNote) sec.insertAdjacentHTML("afterbegin", previewNote); }
+    if (sec) sec.style.display = "";
   }
 }
 
