@@ -226,6 +226,28 @@ tbody tr:last-child td { border-bottom: none; }
 tbody tr:nth-child(even) { background: #fafdf9; }
 tbody tr:hover { background: #eef6ec; }
 
+/* ── Final-Spiel (abgesetzt unter dem Spielplan) ───────────── */
+.final-block {
+  margin-top: 22px; padding: 22px 24px; border-radius: 18px; text-align: center;
+  background: linear-gradient(135deg, #fff7e6, #fffdf8);
+  border: 2px solid var(--sun); box-shadow: var(--shadow);
+}
+.final-label {
+  display: inline-block; font-weight: 800; font-size: .8rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--sun-d); margin-bottom: 12px;
+}
+.final-match {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  flex-wrap: wrap; font-size: 1.2rem; font-weight: 700; color: var(--ink);
+}
+.final-team.winner { color: var(--green-d); }
+.final-cup { font-size: 1.05em; }
+.final-score {
+  background: #fff; border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 18px; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.final-time { color: var(--muted); font-size: .85rem; margin-top: 10px; }
+
 /* ── CTA-Band ──────────────────────────────────────────────── */
 .cta-band {
   text-align: center; color: #fff; padding: 70px 22px; margin: 0;

@@ -51,7 +51,8 @@ window.APP_CONFIG = {
   // (z.B. sobald alle Teams feststehen). Einfach auf "true" setzen.
   RESULTS: {
     sheetName: "Ergebnisse",
-    showSpielplan: false, // Spielplan inkl. Resultate einblenden
+    finalSheetName: "Finalspiel", // Final wird unter dem Spielplan abgesetzt gezeigt
+    showSpielplan: false, // Spielplan inkl. Resultate (und Final) einblenden
     showTabelle: false,   // Tabelle / Rangliste einblenden
   },
 };
