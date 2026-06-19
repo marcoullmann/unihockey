@@ -15,7 +15,12 @@ window.APP_CONFIG = {
   HERO_IMAGE: "images/hero.jpg",
   HERO_VIDEO: "images/hero-loop.mp4", // stummer 720p-Loop, Bild dient als Poster/Fallback
 
-  // Foto-Galerie unten auf der Seite.
+  // Foto-Galerie: Bilder werden bevorzugt live aus dem öffentlichen Google-Photos-
+  // Album geladen (Serverless-Funktion /api/album). Die statische GALLERY-Liste
+  // dient nur als Fallback, falls das Album leer oder nicht erreichbar ist.
+  PHOTOS_ALBUM_API: "/api/album",
+
+  // Fallback-Galerie (statische Bilder im images-Ordner).
   GALLERY: [
     "images/g1.jpg",
     "images/g2.jpg",

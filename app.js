@@ -23,27 +23,66 @@ if (cfg.FORM_URL) {
   if (formBtn) { formBtn.href = cfg.FORM_URL; formBtn.target = "_blank"; formBtn.rel = "noopener"; }
 }
 
-// ── Galerie (optional) mit Lightbox ──────────────────────────
-if (Array.isArray(cfg.GALLERY) && cfg.GALLERY.length) {
+// ── Galerie mit Lightbox ─────────────────────────────────────
+// Quelle: bevorzugt das öffentliche Google-Photos-Album (über /api/album),
+// sonst die statische Liste cfg.GALLERY als Fallback. So aktualisiert sich die
+// Galerie automatisch, sobald Fotos ins Album kommen.
+(function () {
   const wrap = $("#gallery");
-  const box = document.createElement("div");
-  box.className = "lightbox"; // versteckt per CSS (display:none), bis .open gesetzt wird
-  box.innerHTML = '<img alt="Foto vom Unihockey-Turnier">';
-  document.body.appendChild(box);
-  const close = () => box.classList.remove("open");
-  box.addEventListener("click", close);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  if (!wrap) return;
 
-  cfg.GALLERY.forEach((src) => {
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = "Impression vom Unihockey-Turnier";
-    img.loading = "lazy";
-    img.addEventListener("click", () => { box.firstElementChild.src = src; box.classList.add("open"); });
-    wrap.appendChild(img);
-  });
-  $("#galerie-sec").hidden = false;
-}
+  let box = null;
+  function lightbox() {
+    if (box) return box;
+    box = document.createElement("div");
+    box.className = "lightbox"; // versteckt per CSS, bis .open gesetzt wird
+    box.innerHTML = '<img alt="Foto vom Unihockey-Turnier">';
+    document.body.appendChild(box);
+    const close = () => box.classList.remove("open");
+    box.addEventListener("click", close);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    return box;
+  }
+
+  // Google-Photos-URLs vertragen Grössen-Suffixe (=w800); statische Pfade nicht.
+  const sized = (src, suffix) =>
+    src.includes("googleusercontent.com") ? src + suffix : src;
+
+  function build(urls) {
+    if (!Array.isArray(urls) || !urls.length) return false;
+    const lb = lightbox();
+    const frag = document.createDocumentFragment();
+    urls.forEach((src) => {
+      const img = document.createElement("img");
+      img.src = sized(src, "=w800");
+      img.alt = "Impression vom Unihockey-Turnier";
+      img.loading = "lazy";
+      img.addEventListener("click", () => {
+        lb.firstElementChild.src = sized(src, "=w1600");
+        lb.classList.add("open");
+      });
+      frag.appendChild(img);
+    });
+    wrap.appendChild(frag);
+    $("#galerie-sec").hidden = false;
+    return true;
+  }
+
+  async function fromAlbum() {
+    if (!cfg.PHOTOS_ALBUM_API) return [];
+    try {
+      const r = await fetch(cfg.PHOTOS_ALBUM_API, { cache: "no-store" });
+      if (!r.ok) return [];
+      const d = await r.json();
+      return Array.isArray(d.photos) ? d.photos : [];
+    } catch (e) { return []; }
+  }
+
+  (async function () {
+    if (build(await fromAlbum())) return;
+    build(cfg.GALLERY); // Fallback: statische Galerie
+  })();
+})();
 
 // ── gviz-Helper ──────────────────────────────────────────────
 function buildUrl(sheetName, headerRows) {
