@@ -313,7 +313,6 @@ function SheetSection(opts) {
 function parseErgebnisse(rows) {
   const t = (r, i) => ((r[i] || "") + "").trim();
   const games = [];
-  let headerRow = -1;
 
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
@@ -327,20 +326,20 @@ function parseErgebnisse(rows) {
         score: hs !== "" || as !== "" ? `${hs} : ${as}` : "–",
       });
     }
-    // erste Tabellen-Kopfzeile merken (nicht die "(Kopie)"-Blöcke weiter unten)
-    if (headerRow < 0 &&
-        t(r, 13).toUpperCase() === "SP" &&
-        t(r, 14).toUpperCase() === "G" &&
-        t(r, 21).toUpperCase() === "PKT") {
-      headerRow = i;
-    }
   }
 
+  // Tabelle: erste zusammenhängende Gruppe von Zeilen mit Teamname in Spalte M
+  // (idx12). Bewusst NICHT an der "SP/G/U/V"-Kopfzeile verankert: sobald Resultate
+  // (Zahlen) erfasst sind, typisiert gviz diese Spalten als "number" und verwirft
+  // die Text-Kopfzellen – die Kopfzeile verschwindet dann aus den Daten. Die
+  // Teamnamen-Spalte bleibt dagegen stabil. Die "(Kopie)"-Blöcke weiter unten
+  // werden ignoriert, weil wir nach der ersten Lücke (leere Zeile) abbrechen.
   const standings = [];
-  if (headerRow >= 0) {
-    for (let i = headerRow + 1; i < rows.length; i++) {
-      const team = t(rows[i], 12);
-      if (!team) break; // erster Block endet bei der ersten leeren Zeile
+  let inBlock = false;
+  for (let i = 0; i < rows.length; i++) {
+    const team = t(rows[i], 12);
+    if (team) {
+      inBlock = true;
       const r = rows[i];
       const tf = t(r, 17), ta = t(r, 19);
       standings.push({
@@ -349,6 +348,8 @@ function parseErgebnisse(rows) {
         tore: tf !== "" || ta !== "" ? `${tf}:${ta}` : "–",
         diff: t(r, 20), pkt: t(r, 21),
       });
+    } else if (inBlock) {
+      break;
     }
   }
   return { games, standings };
